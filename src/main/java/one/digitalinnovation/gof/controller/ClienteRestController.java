@@ -2,57 +2,82 @@ package one.digitalinnovation.gof.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 import one.digitalinnovation.gof.model.Cliente;
 import one.digitalinnovation.gof.service.ClienteService;
+import javax.validation.Valid;
+import java.util.List;
 
 /**
- * Esse {@link RestController} representa nossa <b>Facade</b>, pois abstrai toda
- * a complexidade de integrações (Banco de Dados H2 e API do ViaCEP) em uma
- * interface simples e coesa (API REST).
+ * Controller para gerenciamento de Clientes.
+ * Fornece endpoints REST para operações de CRUD.
  * 
  * @author falvojr
  */
 @RestController
-@RequestMapping("clientes")
+@RequestMapping("/clientes")
 public class ClienteRestController {
 
-	@Autowired
-	private ClienteService clienteService;
+    @Autowired
+    private ClienteService clienteService;
 
-	@GetMapping
-	public ResponseEntity<Iterable<Cliente>> buscarTodos() {
-		return ResponseEntity.ok(clienteService.buscarTodos());
-	}
+    /**
+     * Retorna todos os clientes cadastrados.
+     * 
+     * @return lista de clientes
+     */
+    @GetMapping
+    public ResponseEntity<List<Cliente>> buscarTodos() {
+        List<Cliente> clientes = clienteService.buscarTodos();
+        return ResponseEntity.ok(clientes);
+    }
 
-	@GetMapping("/{id}")
-	public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
-		return ResponseEntity.ok(clienteService.buscarPorId(id));
-	}
+    /**
+     * Retorna o cliente correspondente ao ID fornecido.
+     * 
+     * @param id ID do cliente
+     * @return cliente encontrado
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
+        Cliente cliente = clienteService.buscarPorId(id);
+        return ResponseEntity.ok(cliente);
+    }
 
-	@PostMapping
-	public ResponseEntity<Cliente> inserir(@RequestBody Cliente cliente) {
-		clienteService.inserir(cliente);
-		return ResponseEntity.ok(cliente);
-	}
+    /**
+     * Insere um novo cliente.
+     * 
+     * @param cliente dados do cliente a ser inserido
+     * @return cliente inserido
+     */
+    @PostMapping
+    public ResponseEntity<Cliente> inserir(@RequestBody @Valid Cliente cliente) {
+        Cliente novoCliente = clienteService.inserir(cliente);
+        return ResponseEntity.ok(novoCliente);
+    }
 
-	@PutMapping("/{id}")
-	public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody Cliente cliente) {
-		clienteService.atualizar(id, cliente);
-		return ResponseEntity.ok(cliente);
-	}
+    /**
+     * Atualiza os dados de um cliente existente.
+     * 
+     * @param id ID do cliente a ser atualizado
+     * @param cliente novos dados do cliente
+     * @return cliente atualizado
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> atualizar(@PathVariable Long id, @RequestBody @Valid Cliente cliente) {
+        Cliente clienteAtualizado = clienteService.atualizar(id, cliente);
+        return ResponseEntity.ok(clienteAtualizado);
+    }
 
-	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deletar(@PathVariable Long id) {
-		clienteService.deletar(id);
-		return ResponseEntity.ok().build();
-	}
+    /**
+     * Remove um cliente pelo ID fornecido.
+     * 
+     * @param id ID do cliente a ser removido
+     * @return resposta sem conteúdo
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        clienteService.deletar(id);
+        return ResponseEntity.ok().build();
+    }
 }
