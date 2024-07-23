@@ -51,6 +51,13 @@
 			<scope>runtime</scope>
 		</dependency>
 
+		<!-- Corrigir conflito de versão do classgraph -->
+		<dependency>
+			<groupId>io.github.classgraph</groupId>
+			<artifactId>classgraph</artifactId>
+			<version>4.8.137</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
